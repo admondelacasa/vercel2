@@ -67,19 +67,21 @@ const DOM = {
     btnConfirmarEliminar: document.getElementById('btnConfirmarEliminar'),
 
     // Formulario
-    formUsuario: document.getElementById('formUsuario'),
-    usuarioId: document.getElementById('usuarioId'),
-    nombre: document.getElementById('nombre'),
-    email: document.getElementById('email'),
-    password: document.getElementById('password'),
+    formUsuario: document.getElementById('modalUsuario') ? document.getElementById('formUsuario') : null,
+    usuarioId: document.getElementById('modalUsuario') ? document.getElementById('usuarioId') : null,
+    nombre: document.getElementById('modalUsuario') ? document.getElementById('nombre') : null,
+    email: document.getElementById('modalUsuario') ? document.getElementById('email') : null,
+    password: document.getElementById('modalUsuario') ? document.getElementById('password') : null,
 
     // Modales
-    modalUsuario: new bootstrap.Modal(document.getElementById('modalUsuario')),
-    modalConfirmarEliminar: new bootstrap.Modal(document.getElementById('modalConfirmarEliminar')),
+    modalUsuario: (document.getElementById('modalUsuario') && typeof bootstrap !== 'undefined') ? 
+        new bootstrap.Modal(document.getElementById('modalUsuario')) : null,
+    modalConfirmarEliminar: (document.getElementById('modalConfirmarEliminar') && typeof bootstrap !== 'undefined') ? 
+        new bootstrap.Modal(document.getElementById('modalConfirmarEliminar')) : null,
 
     // Elementos de modal
-    modalTitulo: document.getElementById('modalTitulo'),
-    passwordHint: document.getElementById('passwordHint'),
+    modalTitulo: document.getElementById('modalUsuario') ? document.getElementById('modalTitulo') : null,
+    passwordHint: document.getElementById('modalUsuario') ? document.getElementById('passwordHint') : null,
 
     // Alertas y estados
     alertContainer: document.getElementById('alertContainer'),
@@ -88,8 +90,8 @@ const DOM = {
     totalUsuarios: document.getElementById('totalUsuarios'),
 
     // Elementos de modal de eliminar
-    nombreUsuarioEliminar: document.getElementById('nombreUsuarioEliminar'),
-    emailUsuarioEliminar: document.getElementById('emailUsuarioEliminar'),
+    nombreUsuarioEliminar: document.getElementById('modalConfirmarEliminar') ? document.getElementById('nombreUsuarioEliminar') : null,
+    emailUsuarioEliminar: document.getElementById('modalConfirmarEliminar') ? document.getElementById('emailUsuarioEliminar') : null,
 
     // Toggle password
     togglePassword: document.getElementById('togglePassword'),
@@ -214,11 +216,13 @@ export const UI = {
      * UI.mostrarModalNuevoUsuario();
      */
     mostrarModalNuevoUsuario() {
-        this.resetearFormulario();
-        DOM.modalTitulo.innerHTML = '<i class="bi bi-person-plus-fill me-2"></i>Nuevo Usuario';
-        DOM.passwordHint.textContent = 'Mínimo 6 caracteres';
-        DOM.password.required = true;
-        DOM.modalUsuario.show();
+        if (DOM.modalUsuario) {
+            this.resetearFormulario();
+            DOM.modalTitulo.innerHTML = '<i class="bi bi-person-plus-fill me-2"></i>Nuevo Usuario';
+            DOM.passwordHint.textContent = 'Mínimo 6 caracteres';
+            DOM.password.required = true;
+            DOM.modalUsuario.show();
+        }
     },
 
     /**
@@ -234,18 +238,20 @@ export const UI = {
      * @param {string} usuario.email - Email actual
      */
     mostrarModalEditarUsuario(usuario) {
-        this.resetearFormulario();
-        DOM.modalTitulo.innerHTML = '<i class="bi bi-pencil-square me-2"></i>Editar Usuario';
-        DOM.usuarioId.value = usuario.id;
-        DOM.nombre.value = usuario.nombre;
-        DOM.email.value = usuario.email;
-        DOM.password.value = '';
-        DOM.passwordHint.textContent = 'Dejar vacío para mantener la contraseña actual';
-        // ✅ CORRECCIÓN: Password es OPCIONAL en modo edición
-        DOM.password.required = false;
-        // Actualizar minlength solo si se ingresa algo
-        DOM.password.removeAttribute('minlength');
-        DOM.modalUsuario.show();
+        if (DOM.modalUsuario) {
+            this.resetearFormulario();
+            DOM.modalTitulo.innerHTML = '<i class="bi bi-pencil-square me-2"></i>Editar Usuario';
+            DOM.usuarioId.value = usuario.id;
+            DOM.nombre.value = usuario.nombre;
+            DOM.email.value = usuario.email;
+            DOM.password.value = '';
+            DOM.passwordHint.textContent = 'Dejar vacío para mantener la contraseña actual';
+            // ✅ CORRECCIÓN: Password es OPCIONAL en modo edición
+            DOM.password.required = false;
+            // Actualizar minlength solo si se ingresa algo
+            DOM.password.removeAttribute('minlength');
+            DOM.modalUsuario.show();
+        }
     },
 
     /**
@@ -253,10 +259,12 @@ export const UI = {
      * @param {Object} usuario - Datos del usuario a eliminar
      */
     mostrarModalConfirmarEliminar(usuario) {
-        DOM.nombreUsuarioEliminar.textContent = usuario.nombre;
-        DOM.emailUsuarioEliminar.textContent = usuario.email;
-        DOM.btnConfirmarEliminar.setAttribute('data-id', usuario.id);
-        DOM.modalConfirmarEliminar.show();
+        if (DOM.modalConfirmarEliminar && DOM.nombreUsuarioEliminar && DOM.emailUsuarioEliminar && DOM.btnConfirmarEliminar) {
+            DOM.nombreUsuarioEliminar.textContent = usuario.nombre;
+            DOM.emailUsuarioEliminar.textContent = usuario.email;
+            DOM.btnConfirmarEliminar.setAttribute('data-id', usuario.id);
+            DOM.modalConfirmarEliminar.show();
+        }
     },
 
     /**
@@ -327,15 +335,19 @@ export const UI = {
      * Cierra el modal de usuario
      */
     cerrarModalUsuario() {
-        DOM.modalUsuario.hide();
-        this.resetearFormulario();
+        if (DOM.modalUsuario) {
+            DOM.modalUsuario.hide();
+            this.resetearFormulario();
+        }
     },
 
     /**
      * Cierra el modal de confirmación
      */
     cerrarModalConfirmar() {
-        DOM.modalConfirmarEliminar.hide();
+        if (DOM.modalConfirmarEliminar) {
+            DOM.modalConfirmarEliminar.hide();
+        }
     },
 
     /**
